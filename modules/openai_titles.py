@@ -1,12 +1,14 @@
-
 from datetime import datetime
+
 from openai import OpenAI
 import yaml
+
 
 class OpenAITitles:
     def __init__(self, openai_api_key, settings_file="settings.yaml") -> None:
         self.__openai = OpenAI(api_key=openai_api_key)
         self.settings = self.__load_settings(settings_file)
+
 
     def __load_settings(self, settings_file):
         try:
@@ -26,7 +28,7 @@ class OpenAITitles:
                         "content": content,
                     },
                 ],
-                model= self.settings.get("openai_model", "gpt-40-mini")
+                model= self.settings.get("openai_model", "gpt-4o-mini")
             )
             return res
         except Exception as e:
@@ -34,23 +36,27 @@ class OpenAITitles:
             return None
 
 
-    def generate_title_from_text(self, text, date=False):
+    def generate_title_from_text(self, text):
+        with_date = self.settings.get("with_date", False)
         setting_prompt = self.settings.get("prompt", None)
         if setting_prompt:
             prompt = setting_prompt.get("main", "")
 
-        if date:
-            date_format = self.settings.get("date_format", "%Y-%m-%d")
-            date_str = datetime.today().strftime(date_format)
-            prompt += setting_prompt.get("with_date", "")
+            if with_date:
+                current_date = datetime.today().strftime("%Y-%m-%d")
+                with_date_prompt = setting_prompt.get("with_date", "")
+                with_date_prompt = with_date_prompt.replace("{current_date}", current_date)
+                prompt += with_date_prompt
+            else:
+                prompt += setting_prompt.get("without_date", "")
+
+            prompt += setting_prompt.get("pre_content", "") + text
+
+            prompt += setting_prompt.get("post_content", "")
+
+            result = self.__ask_chat_gpt(prompt)
+            return result.choices[0].message.content
         else:
-            prompt += setting_prompt.get("without_date", "")
-
-        prompt += setting_prompt.get("pre_content", "") + text
-
-        prompt += setting_prompt.get("post_content", "")
-
-        print(f"Prompt: {prompt}")
-
-        result = self.__ask_chat_gpt(prompt)
-        return result.choices[0].message.content
+            print("Prompt settings not found.")
+            return None
+    

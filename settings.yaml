@@ -1,29 +1,33 @@
-openai_model: "gpt-3.5-turbo"
+openai_model: "gpt-4o-mini"
+with_date: true
 prompt:
   main: |
     * this is a text from a PDF document generated with OCR
-    * generate a document title for that given text in the corresponding language
-    * add the sender or author of the document with a maximum of 20 characters to the document title 
+    * begin the text with the following line: ### begin of text ###
+    * end the text with the following line: ### end of text ###
+    * generate a title for that given text in the corresponding language
+    * add the sender or author of the document with a maximum of 20 characters to the  title 
     * remove all stop words from the title
-    * the document title must be in a Concise and Informative style
+    * the  title must be in a Concise and Informative style
     * remove duplicate information
     * the length must be smaller that 200 characters
     * do not use asterisks in the title
     * do not use currencies in the result
     * optimize it for readability
     * check the result for filename conventions
-    * re-read the generated document title and optimize it
+    * re-read the generated  title and optimize it
   with_date: |
-    * add the date in form {date_format} as a prefix to the document title
-    * if there is no exact date information in the document, use {date_str}
+    * analyze the text and find the date of the document
+    * add the found date in form YYYY-MM-DD as a prefix to the doument title
+    * if there is no date information in the document, use {current_date}
     * use the form: date sender title
   no_date: |
     * use the form: sender title
     
   pre_content: |
-    ### CONTENT BEGIN ###
+  
+    ### begin of text ###
 
-  post_content: |    
-    ### CONTENT END ###
+  post_content: |  
 
-date_format: "%Y-%m-%d"
+    ### end of text ###
