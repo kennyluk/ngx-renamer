@@ -116,6 +116,11 @@ Successfully installed pyyaml-6.0.2
 
 **Done! Post cosumption only start after Paperless NGX created a new document through uploads, consumptions, or mails.**
 
+```bash
+# This script should run with an 404 error.
+user@host:~/paperless$ docker compose exec -u paperless webserver /usr/src/ngx-renamer/post_consume_script.sh
+```
+
 ## Python development and testing
 
 If you want to develop and test is without integrating it in Paperless NGX you can do that.
