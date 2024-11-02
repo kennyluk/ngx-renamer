@@ -1,5 +1,7 @@
 # Rename titles in Paperless NGX using OpenAI
 
+This is a Paperless NGX post consumption script.More information under this link : https://docs.paperless-ngx.com/advanced_usage/#consume-hooks
+
 ## Installation in Paperless NGX
 
 **Download or checkout the source code:**
