@@ -4,11 +4,11 @@ from modules.openai_titles import OpenAITitles
 
 
 class PaperlessAITitles:
-    def __init__(self, openai_api_key, paperless_url, paperless_api_key):
+    def __init__(self, openai_api_key, paperless_url, paperless_api_key, settings_file="settings.yaml"):
         self.openai_api_key = openai_api_key
         self.paperless_url = paperless_url
         self.paperless_api_key = paperless_api_key
-        self.ai = OpenAITitles(self.openai_api_key)
+        self.ai = OpenAITitles(self.openai_api_key, settings_file)
 
 
     def __get_document_details(self, document_id):
