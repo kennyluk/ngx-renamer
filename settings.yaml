@@ -1,6 +1,9 @@
-openai_model: "gpt-4o-mini"
-with_date: true
+# This file contains the settings for the scripts in the project
+openai_model: "gpt-4o-mini" # the model to use for the generation
+with_date: true # boolean if the title should the date as a prefix
+# the AI prompt for the generation
 prompt:
+  # the main prompt for the AI
   main: |
     * this is a text from a PDF document generated with OCR
     * begin the text with the following line: ### begin of text ###
@@ -16,18 +19,18 @@ prompt:
     * optimize it for readability
     * check the result for filename conventions
     * re-read the generated  title and optimize it
+  # the prompt part will be appended if the date should be included in the title using with_date: true
   with_date: |
     * analyze the text and find the date of the document
     * add the found date in form YYYY-MM-DD as a prefix to the doument title
     * if there is no date information in the document, use {current_date}
     * use the form: date sender title
+  # the prompt part will be appended if the date should not be included in the title using with_date: false
   no_date: |
     * use the form: sender title
-    
+  # the prompt before the content of the document will be appended
   pre_content: |
-  
     ### begin of text ###
-
+  # the prompt after the content of the document will be appended
   post_content: |  
-
     ### end of text ###
