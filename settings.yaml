@@ -13,7 +13,7 @@ prompt:
     * remove all stop words from the title
     * the  title must be in a Concise and Informative style
     * remove duplicate information
-    * the length must be smaller that 200 characters
+    * the length must be smaller that 127 characters
     * do not use asterisks in the title
     * do not use currencies in the result
     * optimize it for readability
