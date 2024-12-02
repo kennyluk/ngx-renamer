@@ -1,15 +1,12 @@
 import requests
-
-from modules.openai_titles import OpenAITitles
-
+from modules.ollama_titles import OllamaTitles
 
 class PaperlessAITitles:
-    def __init__(self, openai_api_key, paperless_url, paperless_api_key, settings_file="settings.yaml"):
-        self.openai_api_key = openai_api_key
+    def __init__(self, ollama_server_url, paperless_url, paperless_api_key, settings_file="settings.yaml"):
+        self.ollama_server_url = ollama_server_url
         self.paperless_url = paperless_url
         self.paperless_api_key = paperless_api_key
-        self.ai = OpenAITitles(self.openai_api_key, settings_file)
-
+        self.ai = OllamaTitles(self.ollama_server_url, settings_file)
 
     def __get_document_details(self, document_id):
         headers = {
@@ -29,7 +26,6 @@ class PaperlessAITitles:
             )
             print(response.text)
             return None
-
 
     def __update_document_title(self, document_id, new_title):
         payload = {"title": new_title}
@@ -55,7 +51,6 @@ class PaperlessAITitles:
             )
             print(response.text)
 
-
     def generate_and_update_title(self, document_id):
         document_details = self.__get_document_details(document_id)
         if document_details:
@@ -73,3 +68,4 @@ class PaperlessAITitles:
                 print("Failed to generate the document title.")
         else:
             print("Failed to retrieve document details.")
+
