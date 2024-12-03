@@ -1,9 +1,9 @@
-ollama_model: "llama3.2:3b"
-with_date: true
+max_tokens: 300
+ollama_model: "llama3.1:latest"
+with_date: false
 prompt:
-  main: "Summarise the content between START_HERE and END_HERE in English to less than 70 characters, including the main creator of the document. Respond with ONLY the unquoted summary. ONLY THE GENERATED SUMMARY WITH NO QUOTES. If you are unable to summarise the content, respond with NO TITLE GENERATED."
+  main: "Extract and summarize the content between START_HERE and END_HERE in 200 characters or less using concise English, common abbreviations, and short forms. Ensure the summary includes who, what, when, why, and how. Respond only with the summary text, without prefatory phrases. If summarization is not possible, respond only with the reason in 100 characters or less."
   with_date: ""
   no_date: ""
-  pre_content: "START_HERE "
-  post_content: " END_HERE"
-
+  pre_content: " START_HERE "
+  post_content: " END_HERE "

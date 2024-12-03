@@ -20,13 +20,14 @@ class OllamaTitles:
             print(f"Error loading settings file: {e}")
             return None
 
-    def __truncate_text(self, text, max_tokens=500):
+    def __truncate_text(self, text):
+        max_tokens = self.settings.get("max_tokens", 500)
         words = text.split()
         if len(words) > max_tokens:
             return ' '.join(words[:max_tokens])
         return text
 
-    def __ask_ollama(self, content):
+    def __ask_ollama(self, content, keep_alive=5):
         try:
             url = f"{self.ollama_server_url}/api/generate"
             print(f"Requesting URL: {url}")
@@ -35,18 +36,42 @@ class OllamaTitles:
                 json={
                     "model": self.settings.get("ollama_model", "llama3.2"),
                     "prompt": content,
+                    "keep_alive": keep_alive,
                     "stream": False  # Ensuring a single response
+                },
+                headers={
+                    "Content-Type": "application/json"
                 }
             )
             response.raise_for_status()
-            result = response.json()
-            return result
+            return response.json()
         except requests.exceptions.RequestException as e:
             print(f"Error generating title from Ollama: {e}")
             return None
 
+    def __remove_punctuation(self, text):
+        # Removing common punctuation that is not appropriate for titles
+        return text.replace(',', '').replace('.', '').replace('!', '').replace('?', '').replace(':', '').replace(';', '')
+
+    def __truncate_to_length(self, text, length):
+        return text[:length]
+
+    def __check_length_and_retry(self, prompt, max_length=128, max_iterations=5):
+        summary = None
+        for iteration in range(max_iterations):
+            result = self.__ask_ollama(prompt)
+            if result and 'response' in result:
+                summary = self.__remove_punctuation(result['response'])
+                print(f"Iteration {iteration + 1}: {summary}")
+                if len(summary) <= max_length:
+                    return summary
+                else:
+                    prompt = f"Summary is too long. Shorten to {max_length} chars. Use concise English, abbreviations, and short forms. Responding with the new summary text, without prefatory text. Current Summary: {summary}"
+
+        return self.__truncate_to_length(summary, max_length) if summary else "Failed to generate a summary."
+
     def generate_title_from_text(self, text):
-        truncated_text = self.__truncate_text(text, max_tokens=500)
+        truncated_text = self.__truncate_text(text)
         with_date = self.settings.get("with_date", False)
         setting_prompt = self.settings.get("prompt", None)
         if setting_prompt:
@@ -65,12 +90,8 @@ class OllamaTitles:
 
             print(f"Constructed Prompt: {prompt}")  # Debugging line to see the prompt
 
-            result = self.__ask_ollama(prompt)
-            if result and 'response' in result:
-                return result['response']
-            else:
-                print("Failed to get a valid response from Ollama.")
-                return None
+            title = self.__check_length_and_retry(prompt)
+            return title
         else:
             print("Prompt settings not found.")
             return None
@@ -142,3 +163,4 @@ class OllamaTitles:
                 print("Failed to generate the document title.")
         else:
             print("Failed to retrieve document details.")
+
