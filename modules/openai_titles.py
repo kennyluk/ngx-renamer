@@ -59,4 +59,4 @@ class OpenAITitles:
         else:
             print("Prompt settings not found.")
             return None
-    
+
